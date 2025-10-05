@@ -114,6 +114,31 @@ export class GifCommands {
     }
 
     /**
+     * Generate GIF from existing frame files
+     * @param {string[]} framePaths - Array of frame file paths
+     * @param {Object} options - GIF generation options
+     */
+    async generateGifFromFrames(framePaths, options = {}) {
+        this.logger.info(`🎬 Assembling GIF from ${framePaths.length} frames...`);
+        
+        try {
+            const result = await this.gifGenerator.assembleGifFromFrames(framePaths, options);
+            
+            if (result.success) {
+                this.logger.success(`🎉 GIF assembled successfully!`);
+                this.logger.info(`📁 Location: ${result.gifPath}`);
+                return result;
+            } else {
+                throw new Error('GIF assembly failed');
+            }
+            
+        } catch (error) {
+            this.logger.error(`❌ Failed to assemble GIF: ${error.message}`);
+            throw error;
+        }
+    }
+
+    /**
      * Test the GIF generation system
      * @param {string} testPrompt - Test prompt
      */

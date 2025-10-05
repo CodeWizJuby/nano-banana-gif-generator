@@ -1,7 +1,7 @@
 {
   "name": "nano-banana-gif-generator",
   "version": "1.0.0",
-  "description": "Professional CLI tool for generating animated GIFs using nano Banana (Google Gemini) AI",
+  "description": "Professional CLI tool for animated GIF generation and image understanding using nano Banana (Google Gemini) AI",
   "main": "src/index.js",
   "type": "module",
   "bin": {
@@ -11,6 +11,10 @@
     "start": "node src/index.js",
     "test": "node tests/test_gemini_integration.js",
     "test:api": "node tests/test_api_key.js",
+    "test:image": "node tests/test_image_understanding.js",
+    "test:comprehensive": "node tests/test_comprehensive_features.js",
+    "test:all": "npm run test && npm run test:api && npm run test:image && npm run test:comprehensive",
+    "demo": "node demo_comprehensive_features.js",
     "lint": "eslint src/ tests/",
     "lint:fix": "eslint src/ tests/ --fix",
     "clean": "node src/index.js clean",
@@ -23,6 +27,11 @@
     "gemini",
     "nano-banana",
     "image-generation",
+    "image-understanding",
+    "object-detection",
+    "image-analysis",
+    "style-transfer",
+    "computer-vision",
     "cli"
   ],
   "author": "BCI Innovation Labs",

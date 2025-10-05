@@ -66,6 +66,124 @@ export class CLICommands {
       .command('info')
       .description('Show information about the tool')
       .action(this.handleInfo.bind(this));
+
+    // Analyze command - New image understanding feature
+    this.program
+      .command('analyze')
+      .description('Analyze an image using Gemini image understanding')
+      .argument('<image-path>', 'path to the image to analyze')
+      .option('-p, --prompt <prompt>', 'analysis prompt (e.g., "Caption this image", "What objects do you see?")', 'Analyze this image and describe what you see')
+      .option('-s, --style <style>', 'caption style (detailed, brief, artistic, technical)', 'detailed')
+      .action(this.handleAnalyze.bind(this));
+
+    // Object detection command
+    this.program
+      .command('detect')
+      .description('Detect objects in an image using Gemini enhanced object detection')
+      .argument('<image-path>', 'path to the image for object detection')
+      .action(this.handleDetectObjects.bind(this));
+
+    // Image-to-image generation command
+    this.program
+      .command('transform')
+      .description('Transform an image with style transfer using Gemini')
+      .argument('<image-path>', 'path to the reference image')
+      .argument('<style-prompt>', 'style description for transformation')
+      .option('-o, --output <path>', 'output path for the transformed image')
+      .action(this.handleTransform.bind(this));
+
+    // Style animation command
+    this.program
+      .command('style-animation')
+      .description('Generate animated GIF from a reference image with style variations')
+      .argument('<image-path>', 'path to the reference image')
+      .argument('<animation-prompt>', 'animation description')
+      .option('-f, --frames <number>', 'number of frames to generate', '5')
+      .option('-w, --width <number>', 'GIF width in pixels', '512')
+      .option('-h, --height <number>', 'GIF height in pixels', '512')
+      .option('-d, --delay <number>', 'delay between frames in milliseconds', '500')
+      .action(this.handleStyleAnimation.bind(this));
+
+    // Text-to-image command
+    this.program
+      .command('text-to-image')
+      .description('Generate high-quality images from text descriptions')
+      .argument('<prompt>', 'text description for image generation')
+      .option('-m, --model <model>', 'model to use (gemini-2.5-flash-image, imagen-4, imagen-4-ultra)', 'gemini-2.5-flash-image')
+      .option('-a, --aspect-ratio <ratio>', 'aspect ratio (1:1, 16:9, 4:3, etc.)', '1:1')
+      .option('-o, --output <path>', 'output path for the generated image')
+      .action(this.handleTextToImage.bind(this));
+
+    // Image editing command
+    this.program
+      .command('edit-image')
+      .description('Edit an image using text prompts to add, remove, or modify elements')
+      .argument('<image-path>', 'path to the image to edit')
+      .argument('<edit-prompt>', 'text prompt for editing instructions')
+      .option('-m, --model <model>', 'model to use', 'gemini-2.5-flash-image')
+      .option('-a, --aspect-ratio <ratio>', 'aspect ratio', '1:1')
+      .option('-o, --output <path>', 'output path for the edited image')
+      .action(this.handleImageEditing.bind(this));
+
+    // Multi-image composition command
+    this.program
+      .command('compose')
+      .description('Compose a new scene using multiple input images')
+      .argument('<composition-prompt>', 'prompt for composition instructions')
+      .option('-i, --images <paths>', 'comma-separated image paths', '')
+      .option('-m, --model <model>', 'model to use', 'gemini-2.5-flash-image')
+      .option('-a, --aspect-ratio <ratio>', 'aspect ratio', '1:1')
+      .option('-o, --output <path>', 'output path for the composed image')
+      .action(this.handleMultiImageComposition.bind(this));
+
+    // Style transfer command
+    this.program
+      .command('style-transfer')
+      .description('Apply style from one image to another')
+      .argument('<source-image>', 'path to the source image')
+      .argument('<style-image>', 'path to the style reference image')
+      .argument('<style-prompt>', 'description of the style transfer')
+      .option('-m, --model <model>', 'model to use', 'gemini-2.5-flash-image')
+      .option('-a, --aspect-ratio <ratio>', 'aspect ratio', '1:1')
+      .option('-o, --output <path>', 'output path for the styled image')
+      .action(this.handleStyleTransfer.bind(this));
+
+    // Text rendering command
+    this.program
+      .command('render-text')
+      .description('Generate images with high-fidelity text rendering')
+      .argument('<text-prompt>', 'text to render in the image')
+      .option('-m, --model <model>', 'model to use (imagen-4 recommended)', 'imagen-4')
+      .option('-a, --aspect-ratio <ratio>', 'aspect ratio', '1:1')
+      .option('-o, --output <path>', 'output path for the text image')
+      .action(this.handleTextRendering.bind(this));
+
+    // Iterative refinement command
+    this.program
+      .command('refine')
+      .description('Progressively refine an image through iterative editing')
+      .argument('<refinement-prompt>', 'prompt for refinement')
+      .option('-p, --previous-image <path>', 'path to the previous image')
+      .option('-m, --model <model>', 'model to use', 'gemini-2.5-flash-image')
+      .option('-a, --aspect-ratio <ratio>', 'aspect ratio', '1:1')
+      .option('-o, --output <path>', 'output path for the refined image')
+      .action(this.handleIterativeRefinement.bind(this));
+
+    // Imagen generation command
+    this.program
+      .command('imagen')
+      .description('Generate images using Imagen model for specialized tasks')
+      .argument('<prompt>', 'text prompt for image generation')
+      .option('-v, --version <version>', 'Imagen version (4 or ultra)', '4')
+      .option('-a, --aspect-ratio <ratio>', 'aspect ratio', '1:1')
+      .option('-o, --output <path>', 'output path for the generated image')
+      .action(this.handleImagenGeneration.bind(this));
+
+    // List available options command
+    this.program
+      .command('list-options')
+      .description('List available models, aspect ratios, and other options')
+      .action(this.handleListOptions.bind(this));
   }
 
   async handleGenerate(prompt, options) {
@@ -154,8 +272,360 @@ export class CLICommands {
     }
   }
 
+  async handleAnalyze(imagePath, options) {
+    try {
+      const prompt = options.prompt || 'Analyze this image and describe what you see';
+      const style = options.style || 'detailed';
+
+      logger.header('Gemini Image Analysis');
+      logger.info(`🖼️ Image: ${imagePath}`);
+      logger.info(`📝 Prompt: ${prompt}`);
+      logger.info(`🎨 Style: ${style}`);
+
+      // Import the integration
+      const { NanoBananaIntegration } = await import('../integrations/gemini_integration.js');
+      const integration = new NanoBananaIntegration(process.env.GOOGLE_API_KEY);
+
+      const result = await integration.generateCaption(imagePath, style);
+      
+      logger.success('🎉 Image analysis completed!');
+      logger.info('📄 Analysis Result:');
+      logger.info(result);
+      
+    } catch (error) {
+      logger.error('Analysis failed:', error.message);
+      process.exit(1);
+    }
+  }
+
+  async handleDetectObjects(imagePath) {
+    try {
+      logger.header('Gemini Object Detection');
+      logger.info(`🖼️ Image: ${imagePath}`);
+
+      // Import the integration
+      const { NanoBananaIntegration } = await import('../integrations/gemini_integration.js');
+      const integration = new NanoBananaIntegration(process.env.GOOGLE_API_KEY);
+
+      const result = await integration.detectObjects(imagePath);
+      
+      logger.success('🎉 Object detection completed!');
+      logger.info('🔍 Detection Results:');
+      logger.info(result);
+      
+    } catch (error) {
+      logger.error('Object detection failed:', error.message);
+      process.exit(1);
+    }
+  }
+
+  async handleTransform(imagePath, stylePrompt, options) {
+    try {
+      const outputPath = options.output || null;
+
+      logger.header('Gemini Image Transformation');
+      logger.info(`🖼️ Reference Image: ${imagePath}`);
+      logger.info(`🎨 Style Prompt: ${stylePrompt}`);
+      if (outputPath) logger.info(`📁 Output Path: ${outputPath}`);
+
+      // Import the integration
+      const { NanoBananaIntegration } = await import('../integrations/gemini_integration.js');
+      const integration = new NanoBananaIntegration(process.env.GOOGLE_API_KEY);
+
+      const result = await integration.imageToImageGeneration(imagePath, stylePrompt, outputPath);
+      
+      logger.success('🎉 Image transformation completed!');
+      logger.info(`📁 Transformed image saved: ${result}`);
+      
+    } catch (error) {
+      logger.error('Image transformation failed:', error.message);
+      process.exit(1);
+    }
+  }
+
+  async handleStyleAnimation(imagePath, animationPrompt, options) {
+    try {
+      const frameCount = parseInt(options.frames) || 5;
+      const width = parseInt(options.width) || 512;
+      const height = parseInt(options.height) || 512;
+      const delay = parseInt(options.delay) || 500;
+
+      logger.header('Gemini Style Animation');
+      logger.info(`🖼️ Reference Image: ${imagePath}`);
+      logger.info(`🎬 Animation Prompt: ${animationPrompt}`);
+      logger.info(`📊 Frames: ${frameCount}, Size: ${width}x${height}, Delay: ${delay}ms`);
+
+      // Import the integration
+      const { NanoBananaIntegration } = await import('../integrations/gemini_integration.js');
+      const integration = new NanoBananaIntegration(process.env.GOOGLE_API_KEY);
+
+      // Generate style animation frames
+      const framePaths = await integration.generateStyleAnimationFrames(imagePath, animationPrompt, frameCount, CONFIG.tempDir);
+
+      // Assemble frames into GIF
+      const result = await this.gifCommands.generateGifFromFrames(framePaths, {
+        width: width,
+        height: height,
+        delay: delay,
+        animationType: 'style-animation'
+      });
+
+      logger.success('🎉 Style animation completed!');
+      logger.info(`📁 Animation GIF saved: ${result.gifPath}`);
+      
+    } catch (error) {
+      logger.error('Style animation failed:', error.message);
+      process.exit(1);
+    }
+  }
+
+  async handleTextToImage(prompt, options) {
+    try {
+      const model = options.model || 'gemini-2.5-flash-image';
+      const aspectRatio = options.aspectRatio || '1:1';
+      const outputPath = options.output || null;
+
+      logger.header('Text-to-Image Generation');
+      logger.info(`📝 Prompt: ${prompt}`);
+      logger.info(`🔧 Model: ${model}`);
+      logger.info(`📐 Aspect Ratio: ${aspectRatio}`);
+
+      const { NanoBananaIntegration } = await import('../integrations/gemini_integration.js');
+      const integration = new NanoBananaIntegration(process.env.GOOGLE_API_KEY);
+
+      const result = await integration.textToImage(prompt, {
+        model: model,
+        aspectRatio: aspectRatio,
+        outputPath: outputPath
+      });
+
+      logger.success('🎉 Text-to-image generation completed!');
+      logger.info(`📁 Image saved: ${result.imagePath}`);
+      logger.info(`📊 Resolution: ${result.resolution}`);
+      logger.info(`🎯 Tokens: ${result.tokens}`);
+      
+    } catch (error) {
+      logger.error('Text-to-image generation failed:', error.message);
+      process.exit(1);
+    }
+  }
+
+  async handleImageEditing(imagePath, editPrompt, options) {
+    try {
+      const model = options.model || 'gemini-2.5-flash-image';
+      const aspectRatio = options.aspectRatio || '1:1';
+      const outputPath = options.output || null;
+
+      logger.header('Image Editing');
+      logger.info(`🖼️ Image: ${imagePath}`);
+      logger.info(`📝 Edit Prompt: ${editPrompt}`);
+      logger.info(`🔧 Model: ${model}`);
+      logger.info(`📐 Aspect Ratio: ${aspectRatio}`);
+
+      const { NanoBananaIntegration } = await import('../integrations/gemini_integration.js');
+      const integration = new NanoBananaIntegration(process.env.GOOGLE_API_KEY);
+
+      const result = await integration.imageEditing(imagePath, editPrompt, {
+        model: model,
+        aspectRatio: aspectRatio,
+        outputPath: outputPath
+      });
+
+      logger.success('🎉 Image editing completed!');
+      logger.info(`📁 Edited image saved: ${result.imagePath}`);
+      
+    } catch (error) {
+      logger.error('Image editing failed:', error.message);
+      process.exit(1);
+    }
+  }
+
+  async handleMultiImageComposition(compositionPrompt, options) {
+    try {
+      const imagePaths = options.images ? options.images.split(',').map(path => path.trim()) : [];
+      const model = options.model || 'gemini-2.5-flash-image';
+      const aspectRatio = options.aspectRatio || '1:1';
+      const outputPath = options.output || null;
+
+      logger.header('Multi-Image Composition');
+      logger.info(`📝 Composition Prompt: ${compositionPrompt}`);
+      logger.info(`🖼️ Images: ${imagePaths.join(', ')}`);
+      logger.info(`🔧 Model: ${model}`);
+      logger.info(`📐 Aspect Ratio: ${aspectRatio}`);
+
+      const { NanoBananaIntegration } = await import('../integrations/gemini_integration.js');
+      const integration = new NanoBananaIntegration(process.env.GOOGLE_API_KEY);
+
+      const result = await integration.multiImageComposition(imagePaths, compositionPrompt, {
+        model: model,
+        aspectRatio: aspectRatio,
+        outputPath: outputPath
+      });
+
+      logger.success('🎉 Multi-image composition completed!');
+      logger.info(`📁 Composed image saved: ${result.imagePath}`);
+      
+    } catch (error) {
+      logger.error('Multi-image composition failed:', error.message);
+      process.exit(1);
+    }
+  }
+
+  async handleStyleTransfer(sourceImage, styleImage, stylePrompt, options) {
+    try {
+      const model = options.model || 'gemini-2.5-flash-image';
+      const aspectRatio = options.aspectRatio || '1:1';
+      const outputPath = options.output || null;
+
+      logger.header('Style Transfer');
+      logger.info(`🖼️ Source Image: ${sourceImage}`);
+      logger.info(`🎨 Style Image: ${styleImage}`);
+      logger.info(`📝 Style Prompt: ${stylePrompt}`);
+      logger.info(`🔧 Model: ${model}`);
+
+      const { NanoBananaIntegration } = await import('../integrations/gemini_integration.js');
+      const integration = new NanoBananaIntegration(process.env.GOOGLE_API_KEY);
+
+      const result = await integration.styleTransfer(sourceImage, styleImage, stylePrompt, {
+        model: model,
+        aspectRatio: aspectRatio,
+        outputPath: outputPath
+      });
+
+      logger.success('🎉 Style transfer completed!');
+      logger.info(`📁 Styled image saved: ${result.imagePath}`);
+      
+    } catch (error) {
+      logger.error('Style transfer failed:', error.message);
+      process.exit(1);
+    }
+  }
+
+  async handleTextRendering(textPrompt, options) {
+    try {
+      const model = options.model || 'imagen-4';
+      const aspectRatio = options.aspectRatio || '1:1';
+      const outputPath = options.output || null;
+
+      logger.header('High-Fidelity Text Rendering');
+      logger.info(`📝 Text Prompt: ${textPrompt}`);
+      logger.info(`🔧 Model: ${model}`);
+      logger.info(`📐 Aspect Ratio: ${aspectRatio}`);
+
+      const { NanoBananaIntegration } = await import('../integrations/gemini_integration.js');
+      const integration = new NanoBananaIntegration(process.env.GOOGLE_API_KEY);
+
+      const result = await integration.textRendering(textPrompt, {
+        model: model,
+        aspectRatio: aspectRatio,
+        outputPath: outputPath
+      });
+
+      logger.success('🎉 Text rendering completed!');
+      logger.info(`📁 Text image saved: ${result.imagePath}`);
+      
+    } catch (error) {
+      logger.error('Text rendering failed:', error.message);
+      process.exit(1);
+    }
+  }
+
+  async handleIterativeRefinement(refinementPrompt, options) {
+    try {
+      const previousImagePath = options.previousImage;
+      const model = options.model || 'gemini-2.5-flash-image';
+      const aspectRatio = options.aspectRatio || '1:1';
+      const outputPath = options.output || null;
+
+      logger.header('Iterative Refinement');
+      logger.info(`📝 Refinement Prompt: ${refinementPrompt}`);
+      logger.info(`🖼️ Previous Image: ${previousImagePath || 'None'}`);
+      logger.info(`🔧 Model: ${model}`);
+
+      const { NanoBananaIntegration } = await import('../integrations/gemini_integration.js');
+      const integration = new NanoBananaIntegration(process.env.GOOGLE_API_KEY);
+
+      const result = await integration.iterativeRefinement(refinementPrompt, previousImagePath, {
+        model: model,
+        aspectRatio: aspectRatio,
+        outputPath: outputPath
+      });
+
+      logger.success('🎉 Iterative refinement completed!');
+      logger.info(`📁 Refined image saved: ${result.imagePath}`);
+      
+    } catch (error) {
+      logger.error('Iterative refinement failed:', error.message);
+      process.exit(1);
+    }
+  }
+
+  async handleImagenGeneration(prompt, options) {
+    try {
+      const version = options.version || '4';
+      const aspectRatio = options.aspectRatio || '1:1';
+      const outputPath = options.output || null;
+
+      logger.header('Imagen Generation');
+      logger.info(`📝 Prompt: ${prompt}`);
+      logger.info(`🔧 Imagen Version: ${version}`);
+      logger.info(`📐 Aspect Ratio: ${aspectRatio}`);
+
+      const { NanoBananaIntegration } = await import('../integrations/gemini_integration.js');
+      const integration = new NanoBananaIntegration(process.env.GOOGLE_API_KEY);
+
+      const result = await integration.generateWithImagen(prompt, {
+        imagenVersion: version,
+        aspectRatio: aspectRatio,
+        outputPath: outputPath
+      });
+
+      logger.success('🎉 Imagen generation completed!');
+      logger.info(`📁 Image saved: ${result.imagePath}`);
+      
+    } catch (error) {
+      logger.error('Imagen generation failed:', error.message);
+      process.exit(1);
+    }
+  }
+
+  async handleListOptions() {
+    try {
+      logger.header('Available Options');
+      
+      const { NanoBananaIntegration } = await import('../integrations/gemini_integration.js');
+      const integration = new NanoBananaIntegration(process.env.GOOGLE_API_KEY);
+
+      logger.info('🔧 Available Models:');
+      const models = integration.getAvailableModels();
+      for (const [model, description] of Object.entries(models)) {
+        logger.info(`  • ${model}: ${description}`);
+      }
+
+      logger.separator();
+      logger.info('📐 Available Aspect Ratios:');
+      const aspectRatios = integration.getAvailableAspectRatios();
+      for (const [ratio, config] of Object.entries(aspectRatios)) {
+        logger.info(`  • ${ratio}: ${config.resolution} (${config.tokens} tokens)`);
+      }
+
+      logger.separator();
+      logger.info('🎯 Model Recommendations:');
+      logger.info('  • photorealistic → imagen-4');
+      logger.info('  • artistic → gemini-2.5-flash-image');
+      logger.info('  • text rendering → imagen-4');
+      logger.info('  • editing → gemini-2.5-flash-image');
+      logger.info('  • composition → gemini-2.5-flash-image');
+      logger.info('  • ultra quality → imagen-4-ultra');
+      
+    } catch (error) {
+      logger.error('Failed to list options:', error.message);
+      process.exit(1);
+    }
+  }
+
   handleInfo() {
-    logger.header('nano Banana GIF Generator');
+    logger.header('nano Banana GIF Generator - Enhanced with Comprehensive Gemini Features');
     logger.info('What is nano Banana?');
     logger.info('• Google\'s premier image generation and editing AI from DeepMind');
     logger.info('• Available at: https://gemini.google/overview/image-generation/');
@@ -164,12 +634,27 @@ export class CLICommands {
     logger.info('• Specializes in precise, localized image changes');
     logger.separator();
     logger.info('This CLI Tool Features:');
-    logger.info('• 🍌 Google Gemini API integration (ready for nano Banana)');
+    logger.info('• 🍌 Google Gemini API integration with comprehensive image generation');
+    logger.info('• 🔍 Image understanding and analysis capabilities');
+    logger.info('• 🎯 Enhanced object detection and segmentation');
+    logger.info('• 🎨 Image-to-image style transfer');
+    logger.info('• 🎬 Style-based animation generation');
     logger.info('• 🎨 Sequential motion animation (like nano Banana\'s consistency)');
     logger.info('• 🌅 Progressive background sequences');
     logger.info('• 🎞️ Multiple animation types (walking, flying, dancing, etc.)');
     logger.info('• 📱 Fallback to OpenAI DALL-E and Stability AI');
     logger.info('• 🎬 Actual GIF file generation');
+    logger.separator();
+    logger.info('NEW: Comprehensive Gemini Image Generation Features:');
+    logger.info('• 📝 Text-to-Image: Generate high-quality images from text descriptions');
+    logger.info('• ✏️ Image Editing: Add, remove, or modify elements with text prompts');
+    logger.info('• 🖼️ Multi-Image Composition: Combine multiple images into new scenes');
+    logger.info('• 🔄 Iterative Refinement: Progressively refine images over multiple turns');
+    logger.info('• 📝 High-Fidelity Text Rendering: Generate images with legible text');
+    logger.info('• 🎨 Style Transfer: Apply styles from one image to another');
+    logger.info('• 🔧 Imagen Integration: Use Imagen models for specialized tasks');
+    logger.info('• 📐 Aspect Ratio Control: Support for all Gemini aspect ratios');
+    logger.info('• 🎯 Model Selection: Choose between Gemini and Imagen models');
     logger.separator();
     logger.info('Setup Instructions:');
     logger.info('1. Add GOOGLE_API_KEY to .env file (priority for nano Banana)');
@@ -178,10 +663,29 @@ export class CLICommands {
     logger.info('4. Run: npm test to test Gemini');
     logger.separator();
     logger.info('Available Commands:');
-    logger.info('• generate "<prompt>" - Create animated GIF');
+    logger.info('• generate "<prompt>" - Create animated GIF from text');
+    logger.info('• text-to-image "<prompt>" - Generate image from text');
+    logger.info('• edit-image "<image>" "<prompt>" - Edit image with text');
+    logger.info('• compose "<prompt>" - Compose scene from multiple images');
+    logger.info('• style-transfer "<source>" "<style>" "<prompt>" - Transfer style');
+    logger.info('• render-text "<text>" - Generate image with text');
+    logger.info('• refine "<prompt>" - Iteratively refine image');
+    logger.info('• imagen "<prompt>" - Generate with Imagen model');
+    logger.info('• analyze "<image-path>" - Analyze image with Gemini');
+    logger.info('• detect "<image-path>" - Detect objects in image');
+    logger.info('• transform "<image-path>" "<style>" - Transform image with style');
+    logger.info('• style-animation "<image-path>" "<prompt>" - Create style animation');
+    logger.info('• list-options - Show available models and options');
     logger.info('• test "<prompt>" - Test Gemini API connection');
     logger.info('• clean - Clean temporary files');
     logger.info('• info - Show this information');
+    logger.separator();
+    logger.info('Image Understanding Features:');
+    logger.info('• 📸 Supports PNG, JPEG, WEBP, HEIC, HEIF formats');
+    logger.info('• 🔍 Enhanced object detection (Gemini 2.0+)');
+    logger.info('• ✂️ Advanced segmentation (Gemini 2.5+)');
+    logger.info('• 📝 Multiple caption styles (detailed, brief, artistic, technical)');
+    logger.info('• 🎨 Style transfer and image transformation');
     logger.separator();
     logger.info('Output Structure:');
     logger.info(`• Individual frames: ${CONFIG.tempDir}/`);
@@ -189,11 +693,13 @@ export class CLICommands {
     logger.separator();
     logger.info('Important Links:');
     logger.info('• nano Banana: https://gemini.google/overview/image-generation/');
+    logger.info('• Gemini Image Generation: https://ai.google.dev/gemini-api/docs/image-generation');
+    logger.info('• Gemini Image Understanding: https://ai.google.dev/gemini-api/docs/image-understanding');
     logger.info('• Google API Keys: https://makersuite.google.com/app/apikey');
     logger.info('• OpenAI API: https://platform.openai.com/api-keys');
     logger.info('• Stability AI: https://platform.stability.ai/account/keys');
     logger.separator();
-    logger.info('This tool will automatically use nano Banana API when available!');
+    logger.info('This tool now supports ALL Gemini image generation capabilities!');
   }
 
   parse() {
