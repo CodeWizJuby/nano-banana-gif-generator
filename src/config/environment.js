@@ -43,7 +43,7 @@ export const ENV_CONFIG = {
   MAX_RETRIES: parseInt(process.env.MAX_RETRIES) || 3,
   
   // Default model settings
-  DEFAULT_MODEL: process.env.DEFAULT_MODEL || 'gemini-2.5-flash-image',
+  DEFAULT_MODEL: process.env.DEFAULT_MODEL,
   DEFAULT_ASPECT_RATIO: process.env.DEFAULT_ASPECT_RATIO || '1:1',
   
   // Logging

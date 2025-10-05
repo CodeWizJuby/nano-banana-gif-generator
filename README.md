@@ -42,9 +42,9 @@ A comprehensive CLI tool for AI-powered image generation, editing, and animation
 nano-banana-gif-generator/
 ├── README.md                    # 📖 Main project documentation (root level)
 ├── package.json                 # 📦 Project configuration
-├── .env.example                # 🔧 Environment variables template
 ├── index.js                    # 🚀 Main entry point
 ├── nano-banana-gif.bat         # 🪟 Windows batch file
+├── PROJECT_STRUCTURE.md        # 📋 Project structure documentation
 ├── src/                        # 💻 Source code
 │   ├── config/
 │   │   └── environment.js      # ⚙️ Environment configuration
@@ -56,17 +56,20 @@ nano-banana-gif-generator/
 ├── scripts/                    # 📜 Scripts and utilities
 │   ├── demos/                  # 🎬 Demonstration scripts
 │   └── tests/                  # 🧪 Comprehensive test scripts
-├── tests/                      # 🧪 Legacy test files
+├── tests/                      # 🧪 Test files
 ├── docs/                       # 📚 Documentation
 │   ├── features/              # Feature documentation
 │   ├── USAGE_GUIDE.md         # Usage guide
-│   └── PROJECT_STRUCTURE.md   # Project structure documentation
+│   ├── PROJECT_STRUCTURE.md   # Project structure documentation
+│   ├── MIGRATION_SUMMARY.md   # Migration documentation
+│   └── TROUBLESHOOTING.md     # Troubleshooting guide
 ├── output/                     # 📁 Generated content
 │   ├── images/                # Single images (default)
 │   ├── frames/                # Animation frames (GIF mode)
 │   └── gifs/                  # Final animated GIFs
 ├── demo_output/               # 🎬 Demo outputs
 ├── test_output/               # 🧪 Test outputs
+├── temp/                      # 🗂️ Temporary files
 ├── examples/                  # 📖 Usage examples
 └── config/                    # ⚙️ Configuration files
 ```
@@ -89,8 +92,7 @@ cd nano-banana-gif-generator
 npm install
 
 # Set up environment variables
-cp .env.example .env
-# Edit .env with your API keys
+# Create a .env file with your API keys (see Environment Setup section below)
 ```
 
 ### Environment Setup
@@ -114,6 +116,7 @@ OUTPUT_DIR=./output
 IMAGES_DIR=./output/images
 FRAMES_DIR=./output/frames
 GIFS_DIR=./output/gifs
+TEMP_DIR=./temp
 TEST_DIR=./test_output
 DEMO_DIR=./demo_output
 
@@ -162,6 +165,7 @@ The project uses a centralized environment configuration system located in `src/
 | `IMAGES_DIR` | ❌ | `./output/images` | Single images directory |
 | `FRAMES_DIR` | ❌ | `./output/frames` | Animation frames directory |
 | `GIFS_DIR` | ❌ | `./output/gifs` | Final GIFs directory |
+| `TEMP_DIR` | ❌ | `./temp` | Temporary files directory |
 | `TEST_DIR` | ❌ | `./test_output` | Test outputs directory |
 | `DEMO_DIR` | ❌ | `./demo_output` | Demo outputs directory |
 | `API_TIMEOUT` | ❌ | `30000` | API timeout in milliseconds |
@@ -448,6 +452,8 @@ npm run info             # Show help information
 - **[docs/USAGE_GUIDE.md](docs/USAGE_GUIDE.md)** - Detailed usage guide and examples
 - **[docs/features/IMPLEMENTATION_SUMMARY.md](docs/features/IMPLEMENTATION_SUMMARY.md)** - Technical implementation details
 - **[docs/PROJECT_STRUCTURE.md](docs/PROJECT_STRUCTURE.md)** - Project structure documentation
+- **[docs/MIGRATION_SUMMARY.md](docs/MIGRATION_SUMMARY.md)** - Migration and update documentation
+- **[docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md)** - Troubleshooting guide
 - **[scripts/demos/demo_comprehensive_features.js](scripts/demos/demo_comprehensive_features.js)** - Feature demonstration script
 - **[scripts/tests/test_comprehensive_features.js](scripts/tests/test_comprehensive_features.js)** - Comprehensive test script
 - **[src/config/environment.js](src/config/environment.js)** - Environment configuration system

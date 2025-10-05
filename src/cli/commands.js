@@ -291,11 +291,37 @@ export class CLICommands {
 
   async handleClean() {
     try {
-      logger.info('Cleaning temporary files...');
-      await FileUtils.cleanDirectory(CONFIG.tempDir);
-      logger.success('Temporary files cleaned');
+      logger.info('🧹 Cleaning all output directories...');
+      
+      const directoriesToClean = [
+        'temp',
+        'test_output',
+        'demo_output',
+        'output/frames',
+        'output/gifs',
+        'output/images'
+      ];
+      
+      let cleanedCount = 0;
+      
+      for (const dir of directoriesToClean) {
+        try {
+          await FileUtils.cleanDirectory(dir);
+          logger.info(`✅ Cleaned: ${dir}`);
+          cleanedCount++;
+        } catch (error) {
+          // Directory might not exist, which is fine
+          if (error.code !== 'ENOENT') {
+            logger.warning(`⚠️ Could not clean ${dir}: ${error.message}`);
+          }
+        }
+      }
+      
+      logger.success(`🧹 Cleanup completed! Cleaned ${cleanedCount} directories`);
+      logger.info('📁 Cleaned directories: temp, test_output, demo_output, output/frames, output/gifs, output/images');
+      
     } catch (error) {
-      logger.error('Clean failed:', error.message);
+      logger.error('❌ Clean failed:', error.message);
       process.exit(1);
     }
   }
