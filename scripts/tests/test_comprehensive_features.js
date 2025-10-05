@@ -3,15 +3,16 @@
  * Tests all the new capabilities implemented based on the Gemini API documentation
  */
 
-import { NanoBananaIntegration } from '../src/integrations/gemini_integration.js';
+import { NanoBananaIntegration } from '../../src/integrations/gemini_integration.js';
+import { ENV_CONFIG, validateEnvironment, displayEnvironmentStatus } from '../../src/config/environment.js';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 
-// Test configuration
+// Test configuration using environment variables
 const TEST_CONFIG = {
-  apiKey: process.env.GOOGLE_API_KEY,
-  testDir: './test_output',
-  timeout: 30000
+  apiKey: ENV_CONFIG.GOOGLE_API_KEY,
+  testDir: ENV_CONFIG.TEST_DIR,
+  timeout: ENV_CONFIG.API_TIMEOUT
 };
 
 // Ensure test directory exists
@@ -193,7 +194,7 @@ async function testTextRendering() {
       "Create a poster with the text 'Welcome to AI' in bold, colorful letters",
       {
         aspectRatio: "4:3",
-        model: "imagen-4",
+        model: "gemini-2.5-flash-image",
         outputPath: path.join(TEST_CONFIG.testDir, "text_rendering.png")
       }
     );
@@ -267,11 +268,11 @@ async function testImagenGeneration() {
   try {
     const integration = new NanoBananaIntegration(TEST_CONFIG.apiKey);
     
-    const result = await integration.generateWithImagen(
+    const result = await integration.textToImage(
       "A photorealistic portrait of a person with detailed facial features",
       {
-        imagenVersion: "4",
         aspectRatio: "3:4",
+        model: "gemini-2.5-flash-image",
         outputPath: path.join(TEST_CONFIG.testDir, "imagen_portrait.png")
       }
     );
@@ -391,8 +392,12 @@ async function testIterativeSession() {
 async function runComprehensiveTests() {
   console.log('🚀 Starting Comprehensive Gemini Image Generation Tests...\n');
   
-  if (!TEST_CONFIG.apiKey) {
-    console.error('❌ GOOGLE_API_KEY not found. Please set it in your environment.');
+  try {
+    validateEnvironment();
+    displayEnvironmentStatus();
+  } catch (error) {
+    console.error('❌ Environment validation failed:', error.message);
+    console.log('   Get your API key at: https://makersuite.google.com/app/apikey');
     return;
   }
   

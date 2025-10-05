@@ -5,15 +5,16 @@
  * This script showcases all the new capabilities implemented based on the Gemini API documentation
  */
 
-import { NanoBananaIntegration } from './src/integrations/gemini_integration.js';
+import { NanoBananaIntegration } from '../../src/integrations/gemini_integration.js';
+import { ENV_CONFIG, validateEnvironment, displayEnvironmentStatus } from '../../src/config/environment.js';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 
-// Configuration
+// Configuration using environment variables
 const DEMO_CONFIG = {
-  apiKey: process.env.GOOGLE_API_KEY,
-  outputDir: './demo_output',
-  timeout: 30000
+  apiKey: ENV_CONFIG.GOOGLE_API_KEY,
+  outputDir: ENV_CONFIG.DEMO_DIR,
+  timeout: ENV_CONFIG.API_TIMEOUT
 };
 
 // Ensure output directory exists
@@ -42,6 +43,9 @@ function displayFeatureInfo() {
   console.log('  • Aspect Ratio Control');
   console.log('  • Model Selection');
   console.log('');
+  
+  // Display environment status
+  displayEnvironmentStatus();
 }
 
 /**
@@ -213,7 +217,7 @@ async function demoTextRendering() {
       "Create a professional poster with the text 'Welcome to AI' in bold, modern typography with a futuristic background",
       {
         aspectRatio: "4:3",
-        model: "imagen-4",
+        model: "gemini-2.5-flash-image",
         outputPath: path.join(DEMO_CONFIG.outputDir, "demo_text_rendering.png")
       }
     );
@@ -289,11 +293,11 @@ async function demoImagenGeneration() {
   try {
     const integration = new NanoBananaIntegration(DEMO_CONFIG.apiKey);
     
-    const result = await integration.generateWithImagen(
+    const result = await integration.textToImage(
       "A photorealistic portrait of a professional woman with detailed facial features, studio lighting",
       {
-        imagenVersion: "4",
         aspectRatio: "3:4",
+        model: "gemini-2.5-flash-image",
         outputPath: path.join(DEMO_CONFIG.outputDir, "demo_imagen.png")
       }
     );
@@ -357,8 +361,10 @@ async function demoOptions() {
 async function runDemo() {
   displayFeatureInfo();
   
-  if (!DEMO_CONFIG.apiKey) {
-    console.error('❌ GOOGLE_API_KEY not found. Please set it in your environment.');
+  try {
+    validateEnvironment();
+  } catch (error) {
+    console.error('❌ Environment validation failed:', error.message);
     console.log('   Get your API key at: https://makersuite.google.com/app/apikey');
     return;
   }

@@ -12,13 +12,15 @@
     "test": "node tests/test_gemini_integration.js",
     "test:api": "node tests/test_api_key.js",
     "test:image": "node tests/test_image_understanding.js",
-    "test:comprehensive": "node tests/test_comprehensive_features.js",
+    "test:comprehensive": "node scripts/tests/test_comprehensive_features.js",
     "test:all": "npm run test && npm run test:api && npm run test:image && npm run test:comprehensive",
-    "demo": "node demo_comprehensive_features.js",
-    "lint": "eslint src/ tests/",
-    "lint:fix": "eslint src/ tests/ --fix",
+    "demo": "node scripts/demos/demo_comprehensive_features.js",
+    "demo:comprehensive": "node scripts/demos/demo_comprehensive_features.js",
+    "lint": "eslint src/ tests/ scripts/",
+    "lint:fix": "eslint src/ tests/ scripts/ --fix",
     "clean": "node src/index.js clean",
-    "info": "node src/index.js info"
+    "info": "node src/index.js info",
+    "env:status": "node -e \"import('./src/config/environment.js').then(m => m.displayEnvironmentStatus())\""
   },
   "keywords": [
     "gif",

@@ -666,6 +666,7 @@ export class NanoBananaIntegration {
      * @returns {Object} Session object for iterative refinement
      */
     createIterativeSession(initialPrompt, options = {}) {
+        const self = this;
         return {
             prompt: initialPrompt,
             options: options,
@@ -673,7 +674,7 @@ export class NanoBananaIntegration {
             currentImage: null,
             
             async refine(refinementPrompt) {
-                const result = await this.iterativeRefinement(
+                const result = await self.iterativeRefinement(
                     refinementPrompt, 
                     this.currentImage, 
                     this.options
@@ -689,7 +690,7 @@ export class NanoBananaIntegration {
             async reset() {
                 this.iterations = [];
                 this.currentImage = null;
-                const result = await this.textToImage(this.prompt, this.options);
+                const result = await self.textToImage(this.prompt, this.options);
                 this.currentImage = result.imagePath;
                 return result;
             }

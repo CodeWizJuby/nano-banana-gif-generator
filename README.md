@@ -1,6 +1,6 @@
 # 🍌 nano Banana GIF Generator
 
-A comprehensive CLI tool for AI-powered image generation, editing, and animation using Google's Gemini technology. Now supports **ALL** Gemini image generation capabilities with organized output structure and consistent animation generation.
+A comprehensive CLI tool for AI-powered image generation, editing, and animation using Google's Gemini technology. Supports **ALL** Gemini image generation capabilities with organized output structure and consistent animation generation.
 
 ## ✨ Features
 
@@ -29,41 +29,46 @@ A comprehensive CLI tool for AI-powered image generation, editing, and animation
 - 🎨 **Image-to-Image Style Transfer** - Transform images with artistic styles
 - 🎬 **Style Animation** - Create animations from reference images with style variations
 
-### 🛠️ Developer Experience
-- 📁 **Professional Structure** - Clean, maintainable codebase
+### 🛠️ **Developer Experience**
+- 📁 **Professional Structure** - Clean, maintainable codebase with organized folders
 - 🛠️ **CLI Interface** - Easy-to-use command-line interface
 - 📸 **Multi-format Support** - PNG, JPEG, WEBP, HEIC, HEIF
+- ⚙️ **Environment Management** - Centralized configuration with validation
+- 🧪 **Comprehensive Testing** - Organized test scripts and demonstrations
 
 ## 🏗️ Project Structure
 
 ```
 nano-banana-gif-generator/
-├── src/                          # Source code
-│   ├── core/                     # Core functionality
-│   │   ├── config.js            # Configuration management
-│   │   ├── logger.js            # Logging utilities
-│   │   ├── gifGenerator.js      # Main GIF generator
-│   │   └── sequenceGenerator.js # Animation frame generation
-│   ├── integrations/            # AI service integrations
-│   │   └── gemini_integration.js # Comprehensive Gemini integration
-│   ├── utils/                   # Utility functions
-│   │   ├── fileUtils.js         # File operations
-│   │   └── animationUtils.js     # Animation logic
-│   ├── cli/                     # CLI interface
-│   │   ├── commands.js          # Command definitions
-│   │   └── gifCommands.js       # GIF-specific commands
-│   └── index.js                 # Main entry point
-├── tests/                       # Test files
-│   ├── test_comprehensive_features.js # All features testing
-│   └── test_gemini_integration.js     # Integration testing
-├── output/                      # Organized output structure
-│   ├── images/                  # Single images (default)
-│   ├── frames/                  # Animation frames (GIF mode)
-│   └── gifs/                    # Final animated GIFs
-├── demo_comprehensive_features.js # Feature demonstration
-├── COMPREHENSIVE_FEATURES.md    # Complete feature documentation
-├── USAGE_GUIDE.md              # Usage guide
-└── package.json                # Project configuration
+├── README.md                    # 📖 Main project documentation (root level)
+├── package.json                 # 📦 Project configuration
+├── .env.example                # 🔧 Environment variables template
+├── index.js                    # 🚀 Main entry point
+├── nano-banana-gif.bat         # 🪟 Windows batch file
+├── src/                        # 💻 Source code
+│   ├── config/
+│   │   └── environment.js      # ⚙️ Environment configuration
+│   ├── core/                   # Core functionality
+│   ├── integrations/           # AI service integrations
+│   ├── utils/                  # Utility functions
+│   ├── cli/                    # Command-line interface
+│   └── index.js               # Source entry point
+├── scripts/                    # 📜 Scripts and utilities
+│   ├── demos/                  # 🎬 Demonstration scripts
+│   └── tests/                  # 🧪 Comprehensive test scripts
+├── tests/                      # 🧪 Legacy test files
+├── docs/                       # 📚 Documentation
+│   ├── features/              # Feature documentation
+│   ├── USAGE_GUIDE.md         # Usage guide
+│   └── PROJECT_STRUCTURE.md   # Project structure documentation
+├── output/                     # 📁 Generated content
+│   ├── images/                # Single images (default)
+│   ├── frames/                # Animation frames (GIF mode)
+│   └── gifs/                  # Final animated GIFs
+├── demo_output/               # 🎬 Demo outputs
+├── test_output/               # 🧪 Test outputs
+├── examples/                  # 📖 Usage examples
+└── config/                    # ⚙️ Configuration files
 ```
 
 ## 🚀 Quick Start
@@ -72,7 +77,6 @@ nano-banana-gif-generator/
 
 - **Node.js 18+** (ES modules support)
 - **Google API Key** for Gemini image generation
-- **ImageMagick or FFmpeg** for final GIF creation
 
 ### Installation
 
@@ -101,8 +105,91 @@ GOOGLE_API_KEY=your_google_api_key_here
 OPENAI_API_KEY=your_openai_api_key_here
 STABILITY_API_KEY=your_stability_api_key_here
 
-# Optional: Disable AI and use placeholders
+# Application settings
+NODE_ENV=development
 USE_API=true
+
+# Output directories (optional - defaults provided)
+OUTPUT_DIR=./output
+IMAGES_DIR=./output/images
+FRAMES_DIR=./output/frames
+GIFS_DIR=./output/gifs
+TEST_DIR=./test_output
+DEMO_DIR=./demo_output
+
+# API settings (optional - defaults provided)
+API_TIMEOUT=30000
+MAX_RETRIES=3
+DEFAULT_MODEL=gemini-2.5-flash-image
+DEFAULT_ASPECT_RATIO=1:1
+LOG_LEVEL=info
+VERBOSE=false
+```
+
+### Environment Validation
+
+Check your environment configuration:
+
+```bash
+# Display environment status
+npm run env:status
+
+# Validate environment before running scripts
+npm run demo
+npm run test:comprehensive
+```
+
+## ⚙️ Environment Configuration
+
+The project uses a centralized environment configuration system located in `src/config/environment.js`:
+
+### 🔧 **Configuration Features**
+
+- **Centralized Management**: All environment variables managed in one place
+- **Validation**: Automatic validation of required API keys
+- **Service Detection**: Check which AI services are available
+- **Status Display**: Easy way to view current configuration
+- **Default Values**: Sensible defaults for all optional settings
+
+### 📋 **Environment Variables**
+
+| Variable | Required | Default | Description |
+|----------|----------|---------|-------------|
+| `GOOGLE_API_KEY` | ✅ | - | Google Gemini API key |
+| `OPENAI_API_KEY` | ❌ | - | OpenAI DALL-E API key (fallback) |
+| `STABILITY_API_KEY` | ❌ | - | Stability AI API key (fallback) |
+| `OUTPUT_DIR` | ❌ | `./output` | Main output directory |
+| `IMAGES_DIR` | ❌ | `./output/images` | Single images directory |
+| `FRAMES_DIR` | ❌ | `./output/frames` | Animation frames directory |
+| `GIFS_DIR` | ❌ | `./output/gifs` | Final GIFs directory |
+| `TEST_DIR` | ❌ | `./test_output` | Test outputs directory |
+| `DEMO_DIR` | ❌ | `./demo_output` | Demo outputs directory |
+| `API_TIMEOUT` | ❌ | `30000` | API timeout in milliseconds |
+| `MAX_RETRIES` | ❌ | `3` | Maximum retry attempts |
+| `DEFAULT_MODEL` | ❌ | `gemini-2.5-flash-image` | Default AI model |
+| `DEFAULT_ASPECT_RATIO` | ❌ | `1:1` | Default aspect ratio |
+| `LOG_LEVEL` | ❌ | `info` | Logging level |
+| `VERBOSE` | ❌ | `false` | Verbose output |
+
+### 🚀 **Usage in Code**
+
+```javascript
+import { ENV_CONFIG, validateEnvironment, getApiKey } from './src/config/environment.js';
+
+// Validate environment
+try {
+  validateEnvironment();
+} catch (error) {
+  console.error('Environment validation failed:', error.message);
+}
+
+// Get API key for specific service
+const googleApiKey = getApiKey('google');
+const openaiApiKey = getApiKey('openai');
+
+// Access configuration
+console.log('Output directory:', ENV_CONFIG.OUTPUT_DIR);
+console.log('API timeout:', ENV_CONFIG.API_TIMEOUT);
 ```
 
 ## 📖 Usage
@@ -160,7 +247,7 @@ node src/index.js refine "Add more details" --previous-image "previous.png"
 node src/index.js analyze path/to/image.jpg
 
 # Custom analysis prompt
-node src/index.js analyze path/to/image.jpg -p "What emotions does this image convey?"
+node src/index.js analyze path/to/image.jpg --prompt "What emotions does this image convey?"
 
 # Detect objects in an image
 node src/index.js detect path/to/image.jpg
@@ -250,23 +337,51 @@ const frames = await integration.generateAnimationFrames("A cat walking", 5, "./
 
 ## 🔧 Development
 
-### Code Quality
+### Available Scripts
 
 ```bash
-# Lint code
-npm run lint
+# Start the CLI
+npm start
 
-# Fix linting issues
-npm run lint:fix
+# Environment management
+npm run env:status       # Display environment configuration status
+
+# Run tests
+npm test                    # Basic integration test
+npm run test:api          # API key test
+npm run test:image        # Image understanding test
+npm run test:comprehensive # All features test (new location)
+npm run test:all          # Run all tests
+
+# Feature demonstration
+npm run demo              # Comprehensive feature demo (new location)
+npm run demo:comprehensive # Same as above
+
+# Code quality
+npm run lint              # Lint code (includes scripts/)
+npm run lint:fix         # Fix linting issues
+
+# Utility commands
+npm run clean            # Clean temporary files
+npm run info             # Show help information
 ```
+
+### New Script Locations
+
+- **Demo Script**: `scripts/demos/demo_comprehensive_features.js`
+- **Test Script**: `scripts/tests/test_comprehensive_features.js`
+- **Environment Config**: `src/config/environment.js`
 
 ### Project Structure
 
+- **`src/config/`** - Environment configuration and validation
 - **`src/core/`** - Core application logic
 - **`src/integrations/`** - AI service integrations
 - **`src/utils/`** - Utility functions
 - **`src/cli/`** - Command-line interface
-- **`tests/`** - Test files
+- **`scripts/demos/`** - Demonstration scripts
+- **`scripts/tests/`** - Comprehensive test scripts
+- **`tests/`** - Legacy test files
 - **`docs/`** - Documentation
 
 ### Adding New Features
@@ -274,19 +389,9 @@ npm run lint:fix
 1. **New AI Integration**: Add to `src/integrations/`
 2. **New Utility**: Add to `src/utils/`
 3. **New CLI Command**: Add to `src/cli/commands.js`
-4. **New Test**: Add to `tests/`
-
-## 🎨 Animation Types
-
-The tool automatically detects animation types from prompts:
-
-- **Walking** - Character movement animations
-- **Flying** - Soaring and flight sequences
-- **Dancing** - Dance and movement patterns
-- **Transformation** - Morphing and changing objects
-- **Flowing** - Water and wave animations
-- **Rotating** - Spinning and rotation effects
-- **General** - Default motion sequences
+4. **New Demo**: Add to `scripts/demos/`
+5. **New Test**: Add to `scripts/tests/` or `tests/`
+6. **Environment Variables**: Update `src/config/environment.js`
 
 ## 🔍 Image Understanding Capabilities
 
@@ -325,7 +430,7 @@ The tool automatically detects animation types from prompts:
 ### Google Gemini (nano Banana)
 - **Primary Service** - Best quality and consistency
 - **API Key**: Get from [Google AI Studio](https://makersuite.google.com/app/apikey)
-- **Model**: `gemini-2.5-flash` (supports image understanding)
+- **Model**: `gemini-2.5-flash-image` (supports image generation and understanding)
 
 ### OpenAI DALL-E
 - **Fallback Service** - High quality alternative
@@ -339,10 +444,13 @@ The tool automatically detects animation types from prompts:
 
 ## 📚 Documentation
 
-- **[COMPREHENSIVE_FEATURES.md](COMPREHENSIVE_FEATURES.md)** - Complete feature documentation with examples
-- **[USAGE_GUIDE.md](USAGE_GUIDE.md)** - Detailed usage guide and examples
-- **[IMPLEMENTATION_SUMMARY.md](IMPLEMENTATION_SUMMARY.md)** - Technical implementation details
-- **[demo_comprehensive_features.js](demo_comprehensive_features.js)** - Feature demonstration script
+- **[docs/features/COMPREHENSIVE_FEATURES.md](docs/features/COMPREHENSIVE_FEATURES.md)** - Complete feature documentation with examples
+- **[docs/USAGE_GUIDE.md](docs/USAGE_GUIDE.md)** - Detailed usage guide and examples
+- **[docs/features/IMPLEMENTATION_SUMMARY.md](docs/features/IMPLEMENTATION_SUMMARY.md)** - Technical implementation details
+- **[docs/PROJECT_STRUCTURE.md](docs/PROJECT_STRUCTURE.md)** - Project structure documentation
+- **[scripts/demos/demo_comprehensive_features.js](scripts/demos/demo_comprehensive_features.js)** - Feature demonstration script
+- **[scripts/tests/test_comprehensive_features.js](scripts/tests/test_comprehensive_features.js)** - Comprehensive test script
+- **[src/config/environment.js](src/config/environment.js)** - Environment configuration system
 
 ### Quick Links
 - [Gemini Image Generation Documentation](https://ai.google.dev/gemini-api/docs/image-generation)
