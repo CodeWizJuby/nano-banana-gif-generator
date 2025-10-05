@@ -23,18 +23,21 @@ export class CLICommands {
       .description('Generate animated GIFs using nano Banana-style image generation')
       .version('1.0.0');
 
-    // Generate command
+    // Generate command (default: single image, use --gif for animation)
     this.program
       .command('generate')
-      .description('Generate an animated GIF from a text prompt')
+      .description('Generate an image from a text prompt (use --gif for animation)')
       .argument('<prompt>', 'text prompt for image generation')
-      .option('-f, --frames <number>', 'number of frames to generate', '5')
-      .option('-d, --delay <number>', 'delay between frames in milliseconds', '500')
-      .option('-a, --animation <type>', 'animation type (walking, flying, dancing, etc.)', 'general')
-      .option('-w, --width <number>', 'GIF width in pixels', '512')
-      .option('-h, --height <number>', 'GIF height in pixels', '512')
+      .option('--gif', 'generate animated GIF instead of single image', false)
+      .option('-f, --frames <number>', 'number of frames to generate (GIF only)', '5')
+      .option('-d, --delay <number>', 'delay between frames in milliseconds (GIF only)', '500')
+      .option('-a, --animation <type>', 'animation type (GIF only)', 'general')
+      .option('-w, --width <number>', 'image/GIF width in pixels', '512')
+      .option('-h, --height <number>', 'image/GIF height in pixels', '512')
       .option('-q, --quality <number>', 'GIF quality (1-100)', '80')
-      .option('-k, --keep-frames', 'keep individual frame files', false)
+      .option('-k, --keep-frames', 'keep individual frame files (GIF only)', false)
+      .option('-r, --aspect-ratio <ratio>', 'aspect ratio (1:1, 16:9, 4:3, etc.)', '1:1')
+      .option('-m, --model <model>', 'model to use', 'gemini-2.5-flash-image')
       .action(this.handleGenerate.bind(this));
 
     // Generate multiple command
@@ -188,32 +191,57 @@ export class CLICommands {
 
   async handleGenerate(prompt, options) {
     try {
-      // Validate and set default values
-      const frameCount = parseInt(options.frames) || 5;
+      const isGif = options.gif || false;
+      const aspectRatio = options.aspectRatio || '1:1';
+      const model = options.model || 'gemini-2.5-flash-image';
       const width = parseInt(options.width) || 512;
       const height = parseInt(options.height) || 512;
-      const delay = parseInt(options.delay) || 500;
-      const quality = parseInt(options.quality) || 80;
-      const animationType = options.animation || 'general';
-      const keepFrames = options.keepFrames || false;
 
-      logger.header('nano Banana GIF Generation');
-      logger.info(`Prompt: "${prompt}"`);
-      logger.info(`Frames: ${frameCount}, Animation: ${animationType}`);
-      logger.info(`Size: ${width}x${height}, Delay: ${delay}ms`);
+      if (isGif) {
+        // GIF Generation Mode
+        const frameCount = parseInt(options.frames) || 5;
+        const delay = parseInt(options.delay) || 500;
+        const quality = parseInt(options.quality) || 80;
+        const animationType = options.animation || 'general';
+        const keepFrames = options.keepFrames || false;
 
-      const result = await this.gifCommands.generateGif(prompt, {
-        frameCount: frameCount,
-        animationType: animationType,
-        width: width,
-        height: height,
-        delay: delay,
-        quality: quality,
-        keepFrames: keepFrames
-      });
+        logger.header('nano Banana GIF Generation');
+        logger.info(`Prompt: "${prompt}"`);
+        logger.info(`Frames: ${frameCount}, Animation: ${animationType}`);
+        logger.info(`Size: ${width}x${height}, Delay: ${delay}ms`);
 
-      logger.success(`🎉 GIF generated successfully!`);
-      logger.info(`📁 Location: ${result.gifPath}`);
+        const result = await this.gifCommands.generateGif(prompt, {
+          frameCount: frameCount,
+          animationType: animationType,
+          width: width,
+          height: height,
+          delay: delay,
+          quality: quality,
+          keepFrames: keepFrames
+        });
+
+        logger.success(`🎉 GIF generated successfully!`);
+        logger.info(`📁 Location: ${result.gifPath}`);
+      } else {
+        // Single Image Generation Mode (Default)
+        logger.header('nano Banana Image Generation');
+        logger.info(`Prompt: "${prompt}"`);
+        logger.info(`Aspect Ratio: ${aspectRatio}, Model: ${model}`);
+
+        const { NanoBananaIntegration } = await import('../integrations/gemini_integration.js');
+        const integration = new NanoBananaIntegration(process.env.GOOGLE_API_KEY);
+
+        const result = await integration.textToImage(prompt, {
+          aspectRatio: aspectRatio,
+          model: model,
+          outputPath: `output/images/generated_image_${Date.now()}.png`
+        });
+
+        logger.success(`🎉 Image generated successfully!`);
+        logger.info(`📁 Location: ${result.imagePath}`);
+        logger.info(`📊 Resolution: ${result.resolution}`);
+        logger.info(`🎯 Tokens: ${result.tokens}`);
+      }
       
     } catch (error) {
       logger.error('Generation failed:', error.message);
@@ -663,7 +691,8 @@ export class CLICommands {
     logger.info('4. Run: npm test to test Gemini');
     logger.separator();
     logger.info('Available Commands:');
-    logger.info('• generate "<prompt>" - Create animated GIF from text');
+    logger.info('• generate "<prompt>" - Generate single image (default)');
+    logger.info('• generate "<prompt>" --gif - Generate animated GIF');
     logger.info('• text-to-image "<prompt>" - Generate image from text');
     logger.info('• edit-image "<image>" "<prompt>" - Edit image with text');
     logger.info('• compose "<prompt>" - Compose scene from multiple images');
@@ -688,8 +717,9 @@ export class CLICommands {
     logger.info('• 🎨 Style transfer and image transformation');
     logger.separator();
     logger.info('Output Structure:');
-    logger.info(`• Individual frames: ${CONFIG.tempDir}/`);
-    logger.info(`• Final GIFs: ${CONFIG.outputDir}/`);
+    logger.info(`• Single images: output/images/`);
+    logger.info(`• Animation frames: output/frames/`);
+    logger.info(`• Final GIFs: output/gifs/`);
     logger.separator();
     logger.info('Important Links:');
     logger.info('• nano Banana: https://gemini.google/overview/image-generation/');

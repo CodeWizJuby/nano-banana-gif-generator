@@ -155,7 +155,7 @@ export class NanoBananaIntegration {
                 } else if (part.inlineData?.data) {
                     const mime = part.inlineData.mimeType || "image/png";
                     const ext = mime.split("/")[1] || "png";
-                    const finalOutputPath = outputPath || path.resolve(`generated_image_${Date.now()}.${ext}`);
+                    const finalOutputPath = outputPath || path.resolve(`output/images/generated_image_${Date.now()}.${ext}`);
                     
                     fs.writeFileSync(finalOutputPath, Buffer.from(part.inlineData.data, "base64"));
                     console.log(`✅ Image saved: ${finalOutputPath}`);
@@ -300,7 +300,7 @@ export class NanoBananaIntegration {
      * @param {string} outputDir - Directory to save frames
      * @returns {Promise<string[]>} Array of generated image paths
      */
-    async generateAnimationFrames(basePrompt, frameCount, outputDir = './temp', options = {}) {
+    async generateAnimationFrames(basePrompt, frameCount, outputDir = './output/frames', options = {}) {
         const framePaths = [];
         
         // Ensure output directory exists
@@ -525,7 +525,7 @@ export class NanoBananaIntegration {
      * @param {string} outputDir - Directory to save frames
      * @returns {Promise<string[]>} Array of generated image paths
      */
-    async generateStyleAnimationFrames(referenceImagePath, animationPrompt, frameCount, outputDir = './temp', options = {}) {
+    async generateStyleAnimationFrames(referenceImagePath, animationPrompt, frameCount, outputDir = './output/frames', options = {}) {
         const framePaths = [];
         
         // Ensure output directory exists

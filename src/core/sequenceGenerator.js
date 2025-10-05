@@ -34,6 +34,7 @@ export class SequenceGenerator {
         
         const framePaths = [];
         const timestamp = Date.now();
+        let referenceImagePath = null;
         
         for (let i = 0; i < frameCount; i++) {
             try {
@@ -44,8 +45,27 @@ export class SequenceGenerator {
                 
                 // Generate image
                 const framePath = path.join(outputDir, `frame_${i.toString().padStart(2, '0')}_${timestamp}.png`);
-                const generatedPath = await this.nanoBanana.generateImage(framePrompt, null, framePath);
                 
+                let result;
+                if (i === 0) {
+                    // First frame: generate from text prompt
+                    result = await this.nanoBanana.generateImage(framePrompt, {
+                        outputPath: framePath,
+                        aspectRatio: "1:1",
+                        model: "gemini-2.5-flash-image"
+                    });
+                    referenceImagePath = result.imagePath;
+                } else {
+                    // Subsequent frames: use reference image for consistency
+                    result = await this.nanoBanana.generateImage(framePrompt, {
+                        outputPath: framePath,
+                        aspectRatio: "1:1",
+                        model: "gemini-2.5-flash-image",
+                        referenceImagePath: referenceImagePath
+                    });
+                }
+                
+                const generatedPath = result.imagePath;
                 framePaths.push(generatedPath);
                 this.logger.success(`✅ Frame ${i + 1} generated: ${path.basename(generatedPath)}`);
                 
@@ -101,7 +121,8 @@ export class SequenceGenerator {
                 motionPrompt = this.getGeneralMotionPrompt(progress);
         }
         
-        return `${basePrompt}, ${motionPrompt}, frame ${frameNumber} of ${totalFrames}, consistent character and background, smooth animation sequence, cinematic quality`;
+        // Enhanced consistency prompt
+        return `${basePrompt}, ${motionPrompt}, frame ${frameNumber} of ${totalFrames}, EXACTLY the same character, EXACTLY the same background, EXACTLY the same lighting, EXACTLY the same colors, EXACTLY the same scene composition, EXACTLY the same environment, ONLY the pose/motion changes, maintain perfect consistency, smooth animation sequence, cinematic quality, identical character, identical setting, identical everything except the specific movement described`;
     }
 
     /**
@@ -116,7 +137,7 @@ export class SequenceGenerator {
             'left foot forward, right foot back'
         ];
         const phaseIndex = Math.floor((progress / 100) * phases.length);
-        return `walking motion: ${phases[phaseIndex]}, natural gait, dynamic pose`;
+        return `walking motion: ${phases[phaseIndex]}, natural gait, dynamic pose, SAME cat, SAME background, SAME colors, SAME lighting, IDENTICAL character`;
     }
 
     /**
@@ -131,7 +152,7 @@ export class SequenceGenerator {
             'wings up, ascending motion'
         ];
         const phaseIndex = Math.floor((progress / 100) * phases.length);
-        return `flying motion: ${phases[phaseIndex]}, graceful flight, dynamic wing movement`;
+        return `flying motion: ${phases[phaseIndex]}, graceful flight, dynamic wing movement, SAME bird, SAME background, SAME colors, SAME lighting, IDENTICAL character`;
     }
 
     /**
@@ -146,7 +167,7 @@ export class SequenceGenerator {
             'arms up, left foot forward'
         ];
         const phaseIndex = Math.floor((progress / 100) * phases.length);
-        return `dancing motion: ${phases[phaseIndex]}, rhythmic movement, expressive pose`;
+        return `dancing motion: ${phases[phaseIndex]}, rhythmic movement, expressive pose, SAME dancer, SAME background, SAME colors, SAME lighting, IDENTICAL character`;
     }
 
     /**

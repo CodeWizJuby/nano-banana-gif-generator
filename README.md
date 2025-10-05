@@ -1,17 +1,26 @@
 # 🍌 nano Banana GIF Generator
 
-A professional CLI tool for generating animated GIFs and performing advanced image understanding using Google's nano Banana (Gemini) AI technology. This tool leverages the latest AI image generation and understanding capabilities to create smooth, consistent animations and analyze images with state-of-the-art computer vision.
+A comprehensive CLI tool for AI-powered image generation, editing, and animation using Google's Gemini technology. Now supports **ALL** Gemini image generation capabilities with organized output structure and consistent animation generation.
 
 ## ✨ Features
 
-### 🎬 Animation Generation
+### 🎨 **Comprehensive Image Generation**
+- 📝 **Text-to-Image** - Generate high-quality images from text descriptions
+- ✏️ **Image Editing** - Add, remove, or modify elements with text prompts
+- 🖼️ **Multi-Image Composition** - Combine multiple images into new scenes
+- 🔄 **Iterative Refinement** - Progressively refine images over multiple turns
+- 📝 **High-Fidelity Text Rendering** - Generate images with legible text
+- 🎨 **Style Transfer** - Apply styles from one image to another
+- 🔧 **Imagen Integration** - Use Imagen models for specialized tasks
+
+### 🎬 **Consistent Animation Generation**
 - 🍌 **Real nano Banana Integration** - Uses Google's Gemini 2.5 Flash image generation
-- 🎨 **Professional Animation** - Consistent character and background across frames
+- 🎨 **Consistent Animations** - Same character, background, and scene across frames
 - 🎬 **Multiple Animation Types** - Walking, flying, dancing, transformation, and more
 - 🚀 **Pure Node.js** - No Python dependencies, modern ES modules
-- 🎯 **AI Fallbacks** - OpenAI DALL-E, Stability AI, and placeholder modes
+- 📁 **Organized Output** - Clean structure: `output/images/`, `output/frames/`, `output/gifs/`
 
-### 🔍 Image Understanding (NEW!)
+### 🔍 **Advanced Image Understanding**
 - 🔍 **Advanced Image Analysis** - Detailed image description and analysis
 - 🎯 **Enhanced Object Detection** - Gemini 2.0+ improved object detection
 - ✂️ **Image Segmentation** - Gemini 2.5+ advanced segmentation capabilities
@@ -33,22 +42,28 @@ nano-banana-gif-generator/
 │   ├── core/                     # Core functionality
 │   │   ├── config.js            # Configuration management
 │   │   ├── logger.js            # Logging utilities
-│   │   └── generator.js         # Main GIF generator
+│   │   ├── gifGenerator.js      # Main GIF generator
+│   │   └── sequenceGenerator.js # Animation frame generation
 │   ├── integrations/            # AI service integrations
-│   │   └── gemini_integration.js # nano Banana integration
+│   │   └── gemini_integration.js # Comprehensive Gemini integration
 │   ├── utils/                   # Utility functions
 │   │   ├── fileUtils.js         # File operations
 │   │   └── animationUtils.js     # Animation logic
 │   ├── cli/                     # CLI interface
-│   │   └── commands.js          # Command definitions
+│   │   ├── commands.js          # Command definitions
+│   │   └── gifCommands.js       # GIF-specific commands
 │   └── index.js                 # Main entry point
 ├── tests/                       # Test files
-├── docs/                        # Documentation
-├── config/                      # Configuration files
-├── scripts/                     # Build scripts
-├── output/                      # Generated GIFs
-├── temp/                        # Temporary files
-└── package.json                 # Project configuration
+│   ├── test_comprehensive_features.js # All features testing
+│   └── test_gemini_integration.js     # Integration testing
+├── output/                      # Organized output structure
+│   ├── images/                  # Single images (default)
+│   ├── frames/                  # Animation frames (GIF mode)
+│   └── gifs/                    # Final animated GIFs
+├── demo_comprehensive_features.js # Feature demonstration
+├── COMPREHENSIVE_FEATURES.md    # Complete feature documentation
+├── USAGE_GUIDE.md              # Usage guide
+└── package.json                # Project configuration
 ```
 
 ## 🚀 Quick Start
@@ -92,85 +107,145 @@ USE_API=true
 
 ## 📖 Usage
 
-### Animation Commands
+### 🎨 **Default: Single Image Generation**
 
 ```bash
-# Generate an animated GIF
-npm start generate "a cat walking through a garden"
+# Generate single image (saved to output/images/)
+node src/index.js generate "A beautiful sunset over mountains" --aspect-ratio 16:9
 
-# Generate multiple animations
-npm start generate-multiple "a dancing robot" --animations "walking,flying,dancing"
-
-# Test nano Banana integration
-npm test
-
-# Test API key
-npm run test:api
-
-# Clean temporary files
-npm run clean
-
-# Show help information
-npm start info
+# Generate with different aspect ratios
+node src/index.js generate "A portrait of a cat" --aspect-ratio 1:1
+node src/index.js generate "A landscape" --aspect-ratio 16:9
+node src/index.js generate "A mobile image" --aspect-ratio 9:16
 ```
 
-### Image Understanding Commands (NEW!)
+### 🎬 **GIF Mode: Animation Generation**
+
+```bash
+# Generate animated GIF (frames to output/frames/, final to output/gifs/)
+node src/index.js generate "A cat walking" --gif --frames 5 --animation walking
+
+# Different animation types
+node src/index.js generate "A bird flying" --gif --frames 8 --animation flying
+node src/index.js generate "A dancer" --gif --frames 6 --animation dancing
+node src/index.js generate "A transformation" --gif --frames 10 --animation transformation
+```
+
+### 🎯 **Comprehensive Image Features**
+
+```bash
+# Text-to-image with specific settings
+node src/index.js text-to-image "A beautiful landscape" --aspect-ratio 16:9 --model gemini-2.5-flash-image
+
+# Edit existing image
+node src/index.js edit-image "output/images/your_image.png" "Add a rainbow" --aspect-ratio 16:9
+
+# Multi-image composition
+node src/index.js compose "Create a scene" --images "img1.jpg,img2.jpg" --aspect-ratio 16:9
+
+# Style transfer
+node src/index.js style-transfer "source.jpg" "style.jpg" "Apply the style"
+
+# Text rendering
+node src/index.js render-text "Create a poster with 'Welcome' text" --aspect-ratio 4:3
+
+# Iterative refinement
+node src/index.js refine "Add more details" --previous-image "previous.png"
+```
+
+### 🔍 **Image Understanding Commands**
 
 ```bash
 # Analyze an image
-npm start analyze path/to/image.jpg
+node src/index.js analyze path/to/image.jpg
 
 # Custom analysis prompt
-npm start analyze path/to/image.jpg -p "What emotions does this image convey?"
+node src/index.js analyze path/to/image.jpg -p "What emotions does this image convey?"
 
 # Detect objects in an image
-npm start detect path/to/image.jpg
+node src/index.js detect path/to/image.jpg
 
 # Transform image with style transfer
-npm start transform path/to/image.jpg "watercolor painting style"
+node src/index.js transform path/to/image.jpg "watercolor painting style"
 
 # Create style animation from reference image
-npm start style-animation path/to/image.jpg "cycling through art styles" --frames 8
+node src/index.js style-animation path/to/image.jpg "cycling through art styles" --frames 8
 ```
 
-### Advanced Options
+### 🛠️ **Utility Commands**
 
 ```bash
-# Custom analysis style
-npm start analyze image.jpg -s artistic
+# Show all available options
+node src/index.js list-options
 
-# Save transformed image to specific location
-npm start transform image.jpg "oil painting style" -o output/styled.png
+# Show comprehensive help
+node src/index.js info
 
-# Custom animation parameters
-npm start style-animation image.jpg "art style variations" --frames 10 --width 1024 --delay 300
+# Test the system
+node src/index.js test "A simple test image"
+
+# Clean temporary files
+node src/index.js clean
+
+# Run comprehensive tests
+npm run test:comprehensive
+
+# Run feature demonstration
+npm run demo
 ```
 
-### Advanced Usage
+### 📊 **Supported Aspect Ratios**
 
-```bash
-# Custom frame count and delay
-npm start generate "a sunset over mountains" --frames 8 --delay 300
+| Ratio | Resolution | Best For |
+|-------|------------|----------|
+| 1:1   | 1024x1024  | Social media, profile pictures |
+| 16:9  | 1344x768   | Widescreen, presentations |
+| 4:3   | 1184x864   | Traditional photos |
+| 3:4   | 864x1184   | Mobile screens |
+| 9:16  | 768x1344   | Stories, vertical videos |
+| 3:2   | 1248x832   | Landscape photos |
+| 2:3   | 832x1248   | Portrait orientation |
 
-# Specify output file
-npm start generate "dancing robot" --output my_animation.gif
+### 🎬 **Animation Types**
 
-# Test with custom prompt
-npm start test "Create a picture of my cat eating a nano-banana"
+- **walking** - Walking motion with consistent character
+- **flying** - Flying motion with consistent character  
+- **dancing** - Dancing motion with consistent character
+- **transformation** - Transformation effects
+- **rotating** - Rotation motion
+- **flowing** - Flowing motion
+- **general** - General motion (default)
+
+### 🔧 **Model Options**
+
+- **gemini-2.5-flash-image** (default) - Best for flexibility and editing
+- **imagen-4** - Best for photorealistic images
+- **imagen-4-ultra** - Best quality (when available)
+
+### 📁 **Output Structure**
+
+```
+output/
+├── images/     # Single images (default)
+├── frames/     # Animation frames (GIF mode)
+└── gifs/       # Final animated GIFs
 ```
 
 ### Programmatic Usage
 
 ```javascript
-import { generateAnimatedGif } from './src/core/generator.js';
+import { NanoBananaIntegration } from './src/integrations/gemini_integration.js';
 
-const result = await generateAnimatedGif('a cat walking', {
-  frames: 5,
-  delay: 500,
-  output: './my_animation.gif'
+const integration = new NanoBananaIntegration(process.env.GOOGLE_API_KEY);
+
+// Generate single image
+const result = await integration.textToImage("A beautiful landscape", {
+  aspectRatio: "16:9",
+  model: "gemini-2.5-flash-image"
 });
 
-console.log('Generated:', result);
+// Generate animation frames
+const frames = await integration.generateAnimationFrames("A cat walking", 5, "./output/frames");
 ```
 
 ## 🔧 Development
@@ -264,12 +339,13 @@ The tool automatically detects animation types from prompts:
 
 ## 📚 Documentation
 
-- [Image Understanding Examples](examples/image_understanding_examples.md) - Comprehensive examples and usage guide
-- [Troubleshooting Guide](docs/TROUBLESHOOTING.md) - Common issues and solutions
-- [API Documentation](docs/API.md) - Detailed API reference
-- [Contributing Guide](docs/CONTRIBUTING.md) - How to contribute
+- **[COMPREHENSIVE_FEATURES.md](COMPREHENSIVE_FEATURES.md)** - Complete feature documentation with examples
+- **[USAGE_GUIDE.md](USAGE_GUIDE.md)** - Detailed usage guide and examples
+- **[IMPLEMENTATION_SUMMARY.md](IMPLEMENTATION_SUMMARY.md)** - Technical implementation details
+- **[demo_comprehensive_features.js](demo_comprehensive_features.js)** - Feature demonstration script
 
 ### Quick Links
+- [Gemini Image Generation Documentation](https://ai.google.dev/gemini-api/docs/image-generation)
 - [Gemini Image Understanding Documentation](https://ai.google.dev/gemini-api/docs/image-understanding)
 - [Google AI Studio](https://makersuite.google.com/app/apikey)
 - [nano Banana Overview](https://gemini.google/overview/image-generation/)
